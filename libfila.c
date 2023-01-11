@@ -58,13 +58,46 @@ int tamanho_fila (fila_t *f){
  * Insere o elemento no final da fila (politica FIFO).
  * Retorna 1 se a operacao foi bem sucedida e 0 caso contrario.
  */
-int insere_fila (fila_t *f, int elemento);
+int insere_fila (fila_t *f, int elemento){
+    nodo_f_t *n, *aux;
+
+    n = malloc(sizeof(nodo_f_t));
+    n->chave = elemento;
+    n->prox = 0;
+
+    if(f == NULL)
+        return 0;
+
+    if(fila_vazia(f)){
+        f->ini = f->fim = n;
+        f->tamanho++;
+    }
+    else{
+        aux = f->fim;
+        aux->prox = n;
+        f->fim = n;
+        f->tamanho++;
+    }
+    return 1;
+}
 
 /*
  * Remove o elemento do inicio da fila (politica FIFO) e o retorna.
  * Retorna 1 se a operacao foi bem sucedida e 0 caso contrario.
  */
-int retira_fila (fila_t *f, int *elemento);
+int retira_fila (fila_t *f, int *elemento){
+    
+    nodo_f_t *aux;
+
+    if(fila_vazia(f))
+        return 0;
+
+    aux = f->ini;
+    f->ini = f->ini->prox;
+    f->tamanho--;
+    free(aux);
+    return 1;
+}
 
 /*
  * As funcoes abaixo permitem quebrar a politica FIFO da fila,
