@@ -6,13 +6,13 @@ LDFLAGS = -lm
 CC = gcc
 
 # arquivos-objeto
-	objects = teste.o libconjunto.o  liblef.o libfila.o 
+	objects = teste.o liblef.o
      
-teste: teste.o libfila.o
-	$(CC) -o teste teste.o libfila.o $(LDFLAGS)
+teste: teste.o liblef.o
+	$(CC) -o teste teste.o liblef.o $(LDFLAGS)
 
-libfila.o: libfila.c
-	$(CC) -c $(CFLAGS) libfila.c
+liblef.o: liblef.c
+	$(CC) -c $(CFLAGS) liblef.c
 
 teste.o: teste.c
 	$(CC) -c $(CFLAGS) teste.c
