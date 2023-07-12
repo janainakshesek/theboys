@@ -58,25 +58,22 @@ int cardinalidade_cjt (conjunto_t *c){
     return c->card;
 }
 
-int buscaBinaria(conjunto_t *c, int elemento, int fim){
-	int inicio = 0;
+int BuscaBinaria(int elemento, conjunto_t *c, int inicio, int fim){
+    int m;
 
-    while (inicio <= fim) {  
+    m = (inicio + fim)/2;
 
-        int i = (inicio + fim) / 2;  
+    if (inicio > fim)
+        return -1;
 
-        if (c->v[i] == elemento) {  
-            return i;
-        }
+    if(elemento == c->v[m])
+        return m;
+    
+    if( elemento < c->v[m])
+        return BuscaBinaria(elemento, c, inicio, m-1);
+    
+    return BuscaBinaria(elemento, c, m+1, fim);
 
-        if (c->v[i] < elemento) {  
-            inicio = i + 1;
-        } else {  
-            fim = i;
-        }
-    }
-
-    return -1;
 }
 
 /*
@@ -90,7 +87,7 @@ int insere_cjt (conjunto_t *c, int elemento){
     if (c->card == c->max)
         return 0;
 
-    if ((buscaBinaria(c, elemento, c->card-1)) != -1)  /* Se a busca binária der diferente de -1, quer dizer que retornou um índice, ou seja, que existe no vetor*/
+    if ((BuscaBinaria(elemento, c, 0, c->card-1)) != -1)  /* Se a busca binária der diferente de -1, quer dizer que retornou um índice, ou seja, que existe no vetor*/
         return 1;
 
     while(i >= 0 && elemento < c->v[i]){
@@ -107,12 +104,12 @@ int insere_cjt (conjunto_t *c, int elemento){
  * Retorna 1 se a operacao foi bem sucedida e 0 se o elemento nao existe.
  */
 int retira_cjt (conjunto_t *c, int elemento){
-    if((buscaBinaria(c, elemento, c->card-1) == -1)) /* Se a busca binária der diferente de -1, quer dizer que retornou um índice, ou seja, que existe no vetor*/
+    if((BuscaBinaria(elemento, c, 0, c->card-1) == -1)) /* Se a busca binária der diferente de -1, quer dizer que retornou um índice, ou seja, que existe no vetor*/
         return 0;
 
     int i;
 
-    for (i=buscaBinaria(c, elemento, c->card-1); i<c->card-1; i++){
+    for (i=BuscaBinaria(elemento, c, 0, c->card-1); i<c->card-1; i++){
         c->v[i] = c->v[i+1];
     }
     c->card--;
@@ -123,7 +120,7 @@ int retira_cjt (conjunto_t *c, int elemento){
  * Retorna 1 se o elemento pertence ao conjunto e 0 caso contrario.
  */
 int pertence_cjt (conjunto_t *c, int elemento){
-    if((buscaBinaria(c, elemento, c->card-1) != -1))  /* Se a busca binária der diferente de -1, quer dizer que retornou um índice, ou seja, que existe no vetor*/
+    if((BuscaBinaria(elemento, c, 0, c->card-1) != -1))  /* Se a busca binária der diferente de -1, quer dizer que retornou um índice, ou seja, que existe no vetor*/
         return 1;
     return 0;
 }
@@ -186,7 +183,6 @@ conjunto_t *diferenca_cjt (conjunto_t *c1, conjunto_t *c2){
     diferenca->card = cont;
 	
 	return diferenca;
-    destroi_cjt(diferenca);
 }
 
 /*
@@ -206,7 +202,6 @@ conjunto_t *interseccao_cjt (conjunto_t *c1, conjunto_t *c2){
         }
     }
     return interseccao;
-    destroi_cjt(interseccao);
 }
 
 /*
@@ -226,7 +221,6 @@ conjunto_t *uniao_cjt (conjunto_t *c1, conjunto_t *c2){
         insere_cjt(uniao, c2->v[j]);
     }
     return uniao;
-    destroi_cjt(uniao);
 }
 
 /*
@@ -242,7 +236,6 @@ conjunto_t *copia_cjt (conjunto_t *c){
         insere_cjt(copia, c->v[i]);
     }
     return copia;
-    destroi_cjt(copia);
 }
 
 /*
@@ -269,8 +262,7 @@ conjunto_t *cria_subcjt_cjt (conjunto_t *c, int n){
         cont++;
     }
     
-    return sub; 
-    destroi_cjt(sub); 
+    return sub;  
 }
 
 /*
