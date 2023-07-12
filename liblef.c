@@ -46,17 +46,26 @@ int adiciona_inicio_lef (lef_t *l, evento_t *evento){
     nodo_lef_t *n;
 
     n = malloc(sizeof(nodo_lef_t));
-    if (n == NULL)
+    if (n == NULL){
+        free(n);
         return 0;
+    }
+       
     
     n->evento = malloc(sizeof(evento_t));
-    if ((n->evento) == NULL)
+    if (n->evento == NULL){
+        free(n->evento);
         return 0;
+    }
+        
 
     memcpy(n->evento, evento, sizeof(evento_t));
 
-    if (l->Primeiro == NULL)
+    if (l->Primeiro == NULL){
+        l->Primeiro = n;
         n->prox = NULL;
+        return 1;
+    }
     
     n->prox = l->Primeiro;
     l->Primeiro = n;
@@ -73,24 +82,34 @@ int adiciona_ordem_lef (lef_t *l, evento_t *evento){
     nodo_lef_t *novo, *aux;
 
     novo = malloc(sizeof(nodo_lef_t));
-    if (novo == NULL)
+    if (novo == NULL){
+        free(novo);
         return 0;
+    }
 
-    (novo->evento) = malloc(sizeof(evento_t));
-    if ((novo->evento) == NULL)
+    novo->evento = malloc(sizeof(evento_t));
+    if (novo->evento == NULL){
+        free(novo->evento);
         return 0;
+    }
 
-    memcpy(novo->evento, evento, sizeof(evento_t));
-    
-    if (novo->evento->tempo < l->Primeiro->evento->tempo)
-        return adiciona_inicio_lef(l, evento);
-    
-    if (!(novo = malloc(sizeof(nodo_lef_t))))
-        return 0;
+    memcpy(novo->evento, evento, sizeof(evento_t));   
+
+    if (l->Primeiro == NULL){
+        l->Primeiro = novo;
+        novo->prox = NULL;
+        return 1;
+    }
 
     aux = l->Primeiro;
 
-    while (aux->prox != NULL && aux->prox->evento->tempo < novo->evento->tempo){
+    if (novo->evento->tempo < aux->evento->tempo){
+        novo->prox = l->Primeiro;
+        l->Primeiro = novo;
+        return 1;
+    }
+    
+    while ((aux->prox != NULL) && (aux->prox->evento->tempo < novo->evento->tempo)){
         aux = aux->prox;
     }
 
@@ -105,4 +124,15 @@ int adiciona_ordem_lef (lef_t *l, evento_t *evento){
  * A responsabilidade por desalocar
  * a memoria associada eh de quem chama essa funcao.
  */
-evento_t *obtem_primeiro_lef (lef_t *l);
+evento_t *obtem_primeiro_lef (lef_t *l){
+    evento_t *evento;
+    nodo_lef_t *aux;
+
+    aux = l->Primeiro;
+    evento = l->Primeiro->evento;
+    l->Primeiro = l->Primeiro->prox;
+
+    free(aux);
+    
+    return evento;
+}
